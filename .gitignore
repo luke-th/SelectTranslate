@@ -1,0 +1,9 @@
+.build/
+build/
+.swiftpm/
+*.xcodeproj
+xcuserdata/
+.DS_Store
+agents-wip/
+# Local reference material, not part of the project
+reference/

@@ -1,0 +1,42 @@
+{
+  "originHash" : "0489da1a42f0e2f9d723ffb15b1c7cee3dafa8a00d3ed18e9b830ed6fadfca72",
+  "pins" : [
+    {
+      "identity" : "axswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tisfeng/AXSwift.git",
+      "state" : {
+        "revision" : "d737b605c99f6e0f6a21448d0836110bd15b7710",
+        "version" : "0.3.7"
+      }
+    },
+    {
+      "identity" : "keysender",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jordanbaird/KeySender",
+      "state" : {
+        "revision" : "99584bf1a03ab600cc44be89a2dcd98b2dbeb9de",
+        "version" : "0.0.5"
+      }
+    },
+    {
+      "identity" : "selectedtextkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tisfeng/SelectedTextKit.git",
+      "state" : {
+        "revision" : "8914f64a3616b548ddbe05cd3227c57d704af8cf",
+        "version" : "2.6.6"
+      }
+    },
+    {
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle.git",
+      "state" : {
+        "revision" : "ac2def288cbff5cfc7df3ffef6abdf45b72bcb0a",
+        "version" : "2.9.6"
+      }
+    }
+  ],
+  "version" : 3
+}
