@@ -17,7 +17,7 @@ install: app
 	@echo "Installed to /Applications/SelectTranslate.app"
 
 icon:
-	swift scripts/make-icon.swift Resources/AppIcon.icns
+	swift scripts/make-icon.swift Resources/AppIcon.icns Resources/AppIcon.svg docs/icon.png
 
 dmg:
 	./scripts/make-dmg.sh

@@ -1,8 +1,17 @@
-// Renders the app icon (indigo squircle with "A" / "文") into an .icns file.
-// Usage: swift scripts/make-icon.swift Resources/AppIcon.icns
+// Renders Resources/AppIcon.svg into an .icns, placing the artwork on macOS's icon grid
+// (the squircle fills ~82% of the canvas, leaving the standard transparent margin).
+// Usage: swift scripts/make-icon.swift Resources/AppIcon.icns [Resources/AppIcon.svg] [docs/icon.png]
 import AppKit
 
-let output = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "AppIcon.icns"
+let args = CommandLine.arguments
+let output = args.count > 1 ? args[1] : "AppIcon.icns"
+let svgPath = args.count > 2 ? args[2] : "Resources/AppIcon.svg"
+let previewPath = args.count > 3 ? args[3] : nil
+
+guard let artwork = NSImage(contentsOfFile: svgPath) else {
+    print("Could not load \(svgPath)")
+    exit(1)
+}
 
 func render(pixels: Int) -> NSBitmapImageRep {
     let rep = NSBitmapImageRep(
@@ -11,31 +20,15 @@ func render(pixels: Int) -> NSBitmapImageRep {
         bytesPerRow: 0, bitsPerPixel: 0
     )!
     NSGraphicsContext.saveGraphicsState()
-    NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+    let context = NSGraphicsContext(bitmapImageRep: rep)!
+    context.imageInterpolation = .high
+    NSGraphicsContext.current = context
     let size = CGFloat(pixels)
     let inset = size * 0.09
-    let squircle = NSBezierPath(
-        roundedRect: NSRect(x: inset, y: inset, width: size - inset * 2, height: size - inset * 2),
-        xRadius: size * 0.185, yRadius: size * 0.185
+    artwork.draw(
+        in: NSRect(x: inset, y: inset, width: size - inset * 2, height: size - inset * 2),
+        from: .zero, operation: .sourceOver, fraction: 1
     )
-    let gradient = NSGradient(colors: [
-        NSColor(red: 0.30, green: 0.28, blue: 0.94, alpha: 1),
-        NSColor(red: 0.47, green: 0.36, blue: 0.97, alpha: 1),
-        NSColor(red: 0.62, green: 0.45, blue: 0.98, alpha: 1),
-    ])!
-    gradient.draw(in: squircle, angle: 55)
-
-    func glyph(_ text: String, fontSize: CGFloat, center: NSPoint, weight: NSFont.Weight) {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: fontSize, weight: weight),
-            .foregroundColor: NSColor.white,
-        ]
-        let string = NSAttributedString(string: text, attributes: attributes)
-        let bounds = string.size()
-        string.draw(at: NSPoint(x: center.x - bounds.width / 2, y: center.y - bounds.height / 2))
-    }
-    glyph("A", fontSize: size * 0.40, center: NSPoint(x: size * 0.37, y: size * 0.56), weight: .bold)
-    glyph("文", fontSize: size * 0.34, center: NSPoint(x: size * 0.64, y: size * 0.43), weight: .semibold)
     NSGraphicsContext.restoreGraphicsState()
     return rep
 }
@@ -50,6 +43,10 @@ for base in [16, 32, 128, 256, 512] {
         try! data.write(to: iconset.appendingPathComponent(name))
     }
 }
+if let previewPath {
+    try! render(pixels: 512).representation(using: .png, properties: [:])!.write(to: URL(fileURLWithPath: previewPath))
+}
+
 let process = Process()
 process.executableURL = URL(fileURLWithPath: "/usr/bin/iconutil")
 process.arguments = ["-c", "icns", iconset.path, "-o", output]
